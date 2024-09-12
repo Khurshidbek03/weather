@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather List</h1>
+    <a href="{% url 'weather_add' %}">Add New Weather Data</a>
+    <form method="GET">
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" placeholder="Enter city name">
+        
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date">
+        
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date">
+        
+        <button type="submit">Filter</button>
+    </form>
+    <form method="get" action="{% url 'weather_filtered_csv' %}">
+        <input type="hidden" name="city" value="{{ request.GET.city }}">
+        <input type="hidden" name="start_date" value="{{ request.GET.start_date }}">
+        <input type="hidden" name="end_date" value="{{ request.GET.end_date }}">
+        <button type="submit">Export to CSV</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Temperature (°C)</th>
+                <th>Humidity (%)</th>
+                <th>Description</th>
+                <th>Timezone</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for weather in weather_data %}
+            <tr>
+                <td>{{ weather.city }}</td>
+                <td>{{ weather.temperature }}</td>
+                <td>{{ weather.humidity }}</td>
+                <td>{{ weather.description }}</td>
+                <td>{{ weather.timezone }}</td>
+                <td>{{ weather.timestamp }}</td>
+                <td>
+                    <a href="{% url 'weather_edit' weather.pk %}">Edit</a>
+                    <a href="{% url 'weather_delete' weather.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
